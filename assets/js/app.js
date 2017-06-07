@@ -1,4 +1,4 @@
-var map, featureList, boroughSearch = [], theaterSearch = [], museumSearch = [];
+var map, featureList, boroughSearch = [], theaterSearch = [], museumSearch = [],brewerySearch = [];
 
 $(window).resize(function() {
   sizeLayerControl();
@@ -91,19 +91,28 @@ function sidebarClick(id) {
 function syncSidebar() {
   /* Empty sidebar features */
   $("#feature-list tbody").empty();
-  /* Loop through theaters layer and add only features which are in the map bounds */
+  /* Loop through theaters layer and add only features which are in the map bounds
   theaters.eachLayer(function (layer) {
     if (map.hasLayer(theaterLayer)) {
       if (map.getBounds().contains(layer.getLatLng())) {
         $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/theater.png"></td><td class="feature-name">' + layer.feature.properties.NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
       }
     }
-  });
-  /* Loop through museums layer and add only features which are in the map bounds */
+  });*/
+  /* Loop through museums layer and add only features which are in the map bounds
   museums.eachLayer(function (layer) {
     if (map.hasLayer(museumLayer)) {
       if (map.getBounds().contains(layer.getLatLng())) {
         $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/museum.png"></td><td class="feature-name">' + layer.feature.properties.NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+      }
+    }
+  });*/
+
+  /* Loop through brewery layer and add only features which are in the map bounds */
+  breweries.eachLayer(function (layer) {
+    if (map.hasLayer(breweryLayer)) {
+      if (map.getBounds().contains(layer.getLatLng())) {
+        $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/beer.png"></td><td class="feature-name">' + layer.feature.properties.name + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
       }
     }
   });
@@ -140,8 +149,8 @@ var highlightStyle = {
   fillOpacity: 0.7,
   radius: 10
 };
-
-var boroughs = L.geoJson(null, {
+/* Commenting this  Layers */
+/*var boroughs = L.geoJson(null, {
   style: function (feature) {
     return {
       color: "black",
@@ -212,7 +221,7 @@ var subwayLines = L.geoJson(null, {
 $.getJSON("data/subways.geojson", function (data) {
   subwayLines.addData(data);
 });
-
+*/
 /* Single marker cluster layer to hold all clusters */
 var markerClusters = new L.MarkerClusterGroup({
   spiderfyOnMaxZoom: true,
@@ -222,6 +231,8 @@ var markerClusters = new L.MarkerClusterGroup({
 });
 
 /* Empty layer placeholder to add to layer control for listening when to add/remove theaters to markerClusters layer */
+
+/*
 var theaterLayer = L.geoJson(null);
 var theaters = L.geoJson(null, {
   pointToLayer: function (feature, latlng) {
@@ -262,9 +273,10 @@ var theaters = L.geoJson(null, {
 $.getJSON("data/DOITT_THEATER_01_13SEPT2010.geojson", function (data) {
   theaters.addData(data);
   map.addLayer(theaterLayer);
-});
+});*/
 
 /* Empty layer placeholder to add to layer control for listening when to add/remove museums to markerClusters layer */
+/*
 var museumLayer = L.geoJson(null);
 var museums = L.geoJson(null, {
   pointToLayer: function (feature, latlng) {
@@ -305,7 +317,7 @@ var museums = L.geoJson(null, {
 $.getJSON("data/DOITT_MUSEUM_01_13SEPT2010.geojson", function (data) {
   museums.addData(data);
 });
-
+*/
 /* Empty layer placeholder to add to layer control for listening when to add/remove breweries to markerClusters layer */
 var breweryLayer = L.geoJson(null);
 var breweries = L.geoJson(null, {
@@ -323,7 +335,7 @@ var breweries = L.geoJson(null, {
   },
   onEachFeature: function (feature, layer) {
     if (feature.properties) {
-      var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Name</th><td>" + feature.properties.name + "</td></tr>" + "<tr><th>Phone</th><td>" + feature.properties.type + "</td></tr>" + "<tr><th>Address</th><td>" + feature.properties.address + "</td></tr>" + "<table>";
+      var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Name</th><td>" + feature.properties.name + "</td></tr>" + "<tr><th>Brewery Type</th><td>" + feature.properties.type + "</td></tr>" + "<tr><th>Address</th><td>" + feature.properties.address + "</td></tr>" + "<table>";
       layer.on({
         click: function (e) {
           $("#feature-title").html(feature.properties.name);
@@ -332,7 +344,7 @@ var breweries = L.geoJson(null, {
           highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
         }
       });
-      $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/museum.png"></td><td class="feature-name">' + layer.feature.properties.name + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+      $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/beer.png"></td><td class="feature-name">' + layer.feature.properties.name + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
       museumSearch.push({
         name: layer.feature.properties.name,
         address: layer.feature.properties.address,
@@ -358,14 +370,14 @@ map = L.map("map", {
 
 /* Layer control listeners that allow for a single markerClusters layer */
 map.on("overlayadd", function(e) {
-  if (e.layer === theaterLayer) {
-    markerClusters.addLayer(theaters);
-    syncSidebar();
-  }
-  if (e.layer === museumLayer) {
-    markerClusters.addLayer(museums);
-    syncSidebar();
-  }
+  // if (e.layer === theaterLayer) {
+  //   markerClusters.addLayer(theaters);
+  //   syncSidebar();
+  // }
+  // if (e.layer === museumLayer) {
+  //   markerClusters.addLayer(museums);
+  //   syncSidebar();
+  // }
   if (e.layer === breweryLayer) {
     markerClusters.addLayer(breweries);
     syncSidebar();
@@ -373,14 +385,14 @@ map.on("overlayadd", function(e) {
 });
 
 map.on("overlayremove", function(e) {
-  if (e.layer === theaterLayer) {
-    markerClusters.removeLayer(theaters);
-    syncSidebar();
-  }
-  if (e.layer === museumLayer) {
-    markerClusters.removeLayer(museums);
-    syncSidebar();
-  }
+  // if (e.layer === theaterLayer) {
+  //   markerClusters.removeLayer(theaters);
+  //   syncSidebar();
+  // }
+  // if (e.layer === museumLayer) {
+  //   markerClusters.removeLayer(museums);
+  //   syncSidebar();
+  // }
   if (e.layer === breweryLayer) {
     markerClusters.removeLayer(breweries);
     syncSidebar();
@@ -413,7 +425,7 @@ var attributionControl = L.control({
 });
 attributionControl.onAdd = function (map) {
   var div = L.DomUtil.create("div", "leaflet-control-attribution");
-  div.innerHTML = "<span class='hidden-xs'>Developed by <a href='http://bryanmcbride.com'>bryanmcbride.com</a> | </span><a href='#' onclick='$(\"#attributionModal\").modal(\"show\"); return false;'>Attribution</a>";
+  div.innerHTML = "<span class='hidden-xs'>Developed by Senthil Thyagarajan | </span><a href='#' onclick='$(\"#attributionModal\").modal(\"show\"); return false;'>Attribution</a>";
   return div;
 };
 // map.addControl(attributionControl);

@@ -74,12 +74,18 @@ input[type="radio"], input[type="checkbox"] {
 .leaflet-control-layers {
   overflow: auto;
 }
+.leaflet-right .leaflet-control {
+    margin-right: 10px;
+    font-size: 15px;
+}
 .leaflet-control-layers label {
   font-weight: normal;
   margin-bottom: 0px;
 }
 .leaflet-control-layers-list input[type="radio"], input[type="checkbox"] {
   margin: 2px;
+  height: 16px;
+  width: 16px;
 }
 .table {
   margin-bottom: 0px;
@@ -87,7 +93,14 @@ input[type="radio"], input[type="checkbox"] {
 .navbar .navbar-brand {
   font-weight: bold;
   font-size: 25px;
-  color: #FFFFFF;
+  color: #000000;
+}
+.navbar-inverse {
+    background-color: #FF5733;
+     border-color: #FFFFFF;
+}
+.navbar-inverse .navbar-nav>li>a {
+    color: #000000;
 }
 .navbar-collapse.in {
   overflow-y: hidden;
