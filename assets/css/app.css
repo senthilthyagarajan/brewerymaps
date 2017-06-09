@@ -83,7 +83,7 @@ input[type="radio"], input[type="checkbox"] {
   margin-bottom: 0px;
 }
 .leaflet-control-layers-list input[type="radio"], input[type="checkbox"] {
-  margin: 2px;
+  margin: 7px;
   padding: 10px;
   height: 16px;
   width: 16px;
