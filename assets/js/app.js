@@ -1,7 +1,4 @@
-var map, featureList, boroughSearch = [],
-    theaterSearch = [],
-    museumSearch = [],
-    brewerySearch = [];
+var map, featureList, brewerySearch = [];
 
 $(window).resize(function() {
     sizeLayerControl();
@@ -27,7 +24,7 @@ $("#about-btn").click(function() {
 });
 
 $("#full-extent-btn").click(function() {
-    map.fitBounds(boroughs.getBounds());
+    map.fitBounds(breweries.getBounds());
     $(".navbar-collapse.in").collapse("hide");
     return false;
 });
@@ -136,7 +133,9 @@ var markerClusters = new L.MarkerClusterGroup({
     disableClusteringAtZoom: 16
 });
 
-/* Empty layer placeholder to add to layer control for listening when to add/remove theaters to markerClusters layer */
+/* Empty layer placeholder to add to layer control for listening when to add/remove US Boundaries for full extent to markerClusters layer */
+
+
 
 
 /* Empty layer placeholder to add to layer control for listening when to add/remove breweries to markerClusters layer */
@@ -166,10 +165,10 @@ var breweries = L.geoJson(null, {
                 }
             });
             $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/beer.svg"></td><td class="feature-name">' + layer.feature.properties.name + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
-            museumSearch.push({
+            brewerySearch.push({
                 name: layer.feature.properties.name,
                 address: layer.feature.properties.address,
-                source: "brewery",
+                source: "breweries",
                 id: L.stamp(layer),
                 lat: layer.feature.geometry.coordinates[1],
                 lng: layer.feature.geometry.coordinates[0]
@@ -264,8 +263,8 @@ var locateControl = L.control.locate({
         popup: "You are within {distance} {unit} from this point",
         outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
     },
-    locateOptions: {
-        maxZoom: 18,
+      locateOptions: {
+        maxZoom: 15,
         watch: true,
         enableHighAccuracy: true,
         maximumAge: 10000,
@@ -313,127 +312,110 @@ $("#featureModal").on("hidden.bs.modal", function(e) {
 });
 
 /* Typeahead search functionality */
-$(document).one("ajaxStop", function() {
-    $("#loading").hide();
-    sizeLayerControl();
-    /* Fit map to boroughs bounds */
-    //  map.fitBounds(boroughs.getBounds());
-    featureList = new List("features", {
-        valueNames: ["feature-name"]
-    });
-    featureList.sort("feature-name", {
-        order: "asc"
-    });
+/* Typeahead search functionality */
+$(document).one("ajaxStop", function () {
+  $("#loading").hide();
+  sizeLayerControl();
+  /* Fit map to boroughs bounds */
+  //map.fitBounds(boroughs.getBounds());
+  featureList = new List("features", {valueNames: ["feature-name"]});
+  featureList.sort("feature-name", {order:"asc"});
 
 
 
-    var museumsBH = new Bloodhound({
-        name: "Museums",
-        datumTokenizer: function(d) {
-            return Bloodhound.tokenizers.whitespace(d.name);
+  var breweryBH = new Bloodhound({
+    name: "breweries",
+    datumTokenizer: function (d) {
+      return Bloodhound.tokenizers.whitespace(d.name);
+    },
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    local: brewerySearch,
+    limit: 10
+  });
+
+
+  var geonamesBH = new Bloodhound({
+    name: "GeoNames",
+    datumTokenizer: function (d) {
+      return Bloodhound.tokenizers.whitespace(d.name);
+    },
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+      url: "http://api.geonames.org/searchJSON?username=bootleaf&featureClass=P&maxRows=5&countryCode=US&name_startsWith=%QUERY",
+      filter: function (data) {
+        return $.map(data.geonames, function (result) {
+          return {
+            name: result.name + ", " + result.adminCode1,
+            lat: result.lat,
+            lng: result.lng,
+            source: "GeoNames"
+          };
+        });
+      },
+      ajax: {
+        beforeSend: function (jqXhr, settings) {
+          settings.url += "&east=" + map.getBounds().getEast() + "&west=" + map.getBounds().getWest() + "&north=" + map.getBounds().getNorth() + "&south=" + map.getBounds().getSouth();
+          $("#searchicon").removeClass("fa-search").addClass("fa-refresh fa-spin");
         },
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: museumSearch,
-        limit: 10
-    });
+        complete: function (jqXHR, status) {
+          $('#searchicon').removeClass("fa-refresh fa-spin").addClass("fa-search");
+        }
+      }
+    },
+    limit: 10
+  });
 
-    // var geonamesBH = new Bloodhound({
-    //   name: "GeoNames",
-    //   datumTokenizer: function (d) {
-    //     return Bloodhound.tokenizers.whitespace(d.name);
-    //   },
-    //   queryTokenizer: Bloodhound.tokenizers.whitespace,
-    //   remote: {
-    //     url: "http://api.geonames.org/searchJSON?username=bootleaf&featureClass=P&maxRows=5&countryCode=US&name_startsWith=%QUERY",
-    //     filter: function (data) {
-    //       return $.map(data.geonames, function (result) {
-    //         return {
-    //           name: result.name + ", " + result.adminCode1,
-    //           lat: result.lat,
-    //           lng: result.lng,
-    //           source: "GeoNames"
-    //         };
-    //       });
-    //     },
-    //     ajax: {
-    //       beforeSend: function (jqXhr, settings) {
-    //         settings.url += "&east=" + map.getBounds().getEast() + "&west=" + map.getBounds().getWest() + "&north=" + map.getBounds().getNorth() + "&south=" + map.getBounds().getSouth();
-    //         $("#searchicon").removeClass("fa-search").addClass("fa-refresh fa-spin");
-    //       },
-    //       complete: function (jqXHR, status) {
-    //         $('#searchicon').removeClass("fa-refresh fa-spin").addClass("fa-search");
-    //       }
-    //     }
-    //   },
-    //   limit: 10
-    // });
-    //  boroughsBH.initialize();
-    //  theatersBH.initialize();
-    museumsBH.initialize();
-    //  geonamesBH.initialize();
+  breweryBH.initialize();
+//  museumsBH.initialize();
+  geonamesBH.initialize();
 
-    /* instantiate the typeahead UI */
-    $("#searchbox").typeahead({
-            minLength: 3,
-            highlight: true,
-            hint: false
-        },
+  /* instantiate the typeahead UI */
+  $("#searchbox").typeahead({
+    minLength: 3,
+    highlight: true,
+    hint: false
+  },  {
+    name: "breweries",
+    displayKey: "name",
+    source: breweryBH.ttAdapter(),
+    templates: {
+      header: "<h4 class='typeahead-header'><img src='assets/img/beer.svg' width='24' height='28'>&nbsp;breweries</h4>",
+      suggestion: Handlebars.compile(["{{name}}<br>&nbsp;<small>{{address}}</small>"].join(""))
+    }
+  },{
+    name: "GeoNames",
+    displayKey: "name",
+    source: geonamesBH.ttAdapter(),
+    templates: {
+      header: "<h4 class='typeahead-header'><img src='assets/img/globe.png' width='25' height='25'>&nbsp;GeoNames</h4>"
+    }
+  }).on("typeahead:selected", function (obj, datum) {
 
-        {
-            name: "Museums",
-            displayKey: "name",
-            source: museumsBH.ttAdapter(),
-            templates: {
-                header: "<h4 class='typeahead-header'><img src='assets/img/museum.png' width='24' height='28'>&nbsp;Museums</h4>",
-                suggestion: Handlebars.compile(["{{name}}<br>&nbsp;<small>{{address}}</small>"].join(""))
-            }
-        }
-        // {
-        //   name: "GeoNames",
-        //   displayKey: "name",
-        //   source: geonamesBH.ttAdapter(),
-        //   templates: {
-        //     header: "<h4 class='typeahead-header'><img src='assets/img/globe.png' width='25' height='25'>&nbsp;GeoNames</h4>"
-        //   }
-        // }
+    if (datum.source === "breweries") {
+      if (!map.hasLayer(breweryLayer)) {
+        map.addLayer(breweryLayer);
+      }
+      map.setView([datum.lat, datum.lng], 17);
+      if (map._layers[datum.id]) {
+        map._layers[datum.id].fire("click");
+      }
+    }
 
-    ).on("typeahead:selected", function(obj, datum) {
-        // if (datum.source === "Boroughs") {
-        //   map.fitBounds(datum.bounds);
-        // }
-        if (datum.source === "Theaters") {
-            if (!map.hasLayer(theaterLayer)) {
-                map.addLayer(theaterLayer);
-            }
-            map.setView([datum.lat, datum.lng], 17);
-            if (map._layers[datum.id]) {
-                map._layers[datum.id].fire("click");
-            }
-        }
-        if (datum.source === "Museums") {
-            if (!map.hasLayer(museumLayer)) {
-                map.addLayer(museumLayer);
-            }
-            map.setView([datum.lat, datum.lng], 17);
-            if (map._layers[datum.id]) {
-                map._layers[datum.id].fire("click");
-            }
-        }
-        if (datum.source === "GeoNames") {
-            map.setView([datum.lat, datum.lng], 14);
-        }
-        if ($(".navbar-collapse").height() > 50) {
-            $(".navbar-collapse").collapse("hide");
-        }
-    }).on("typeahead:opened", function() {
-        $(".navbar-collapse.in").css("max-height", $(document).height() - $(".navbar-header").height());
-        $(".navbar-collapse.in").css("height", $(document).height() - $(".navbar-header").height());
-    }).on("typeahead:closed", function() {
-        $(".navbar-collapse.in").css("max-height", "");
-        $(".navbar-collapse.in").css("height", "");
-    });
-    $(".twitter-typeahead").css("position", "static");
-    $(".twitter-typeahead").css("display", "block");
+    if (datum.source === "GeoNames") {
+      map.setView([datum.lat, datum.lng], 14);
+    }
+    if ($(".navbar-collapse").height() > 50) {
+      $(".navbar-collapse").collapse("hide");
+    }
+  }).on("typeahead:opened", function () {
+    $(".navbar-collapse.in").css("max-height", $(document).height() - $(".navbar-header").height());
+    $(".navbar-collapse.in").css("height", $(document).height() - $(".navbar-header").height());
+  }).on("typeahead:closed", function () {
+    $(".navbar-collapse.in").css("max-height", "");
+    $(".navbar-collapse.in").css("height", "");
+  });
+  $(".twitter-typeahead").css("position", "static");
+  $(".twitter-typeahead").css("display", "block");
 });
 
 // Leaflet patch to make layer control scrollable on touch browsers
