@@ -423,115 +423,27 @@ $(document).one("ajaxStop", function() {
     $(".twitter-typeahead").css("display", "block");
 });
 
-//For finding nearest
-// var distances = [];
-// var res = [];
-// var nearByLayer = L.featureGroup();
-// document.getElementById('button').onclick = function() {
-//
-//     navigator.geolocation.getCurrentPosition(function(pos) {
-//         res = leafletKnn(breweries).nearest(
-//             [pos.coords.longitude, pos.coords.latitude], 5);
-//         distances.push(res);
-//     });
-//   for (var i = 0; i < res.length; i++) {
-//
-//         l.bindTooltip(distance.toLocaleString() + ' km from current location.');
-//         L.polyline([[pos.coords.longitude, pos.coords.latitude], res[i].layer._latlng], {
-//             color: 'orange',
-//             weight: 2,
-//             opacity: 1,
-//             dashArray: "5, 10"
-//         }).addTo(nearByLayer);
-//       }
-//
-//
-// };
+// For finding nearest
+
 $("#find-nearest").click(function() {
+  var content;
+    $("#feature-info").empty(content);
     var gj = breweries;
     navigator.geolocation.getCurrentPosition(function(pos) {
         var nearestLayer = leafletKnn(gj).nearest(
             [pos.coords.longitude, pos.coords.latitude], 5);
         for (i = 0; i < nearestLayer.length; i++) {
-  //           map.addLayer(nearestLayer[i].layer, highlightStyle);
-             highlight.addLayer(L.circleMarker([nearestLayer[i].lat, nearestLayer[i].lon], highlightStyle));
+            //           map.addLayer(nearestLayer[i].layer, highlightStyle);
+            highlight.addLayer(L.circleMarker([nearestLayer[i].lat, nearestLayer[i].lon], highlightStyle));
 
-                 var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Name</th><td>" + nearestLayer[i].layer.feature.properties.name + "</td></tr>" + "<tr><th>Type</th><td>" + nearestLayer[i].layer.feature.properties.type + "</td></tr>" + "<tr><th>Address</th><td>" + nearestLayer[i].layer.feature.properties.address + "</td></tr>" + "<table><hr>";
+            content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Name</th><td>" + nearestLayer[i].layer.feature.properties.name + "</td></tr>" + "<tr><th>Type</th><td>" + nearestLayer[i].layer.feature.properties.type + "</td></tr>" + "<tr><th>Address</th><td>" + nearestLayer[i].layer.feature.properties.address + "</td></tr>" + "<table><hr>";
 
-                    //     $("#feature-title").html(nearestLayer[i].layer.feature.properties.name);
-                         $("#feature-info").append(content);
-                         }
-                         $("#featureModal").modal("show");
-
-
-
-
+            $("#feature-info").append(content);
+        }
+            $("#featureModal").modal("show");
 
     })
-
-
 });
-
-
-
-/*
- var $findNearest = $('#find-nearest'),
- $locate = $('#locate');
- function error() {
-        alert("Unable to retrieve your location");
-    };
-
- $locate.fadeIn().on('click', function(e) {
-           if (!navigator.geolocation){
-               alert("<p>Sorry, your browser does not support Geolocation</p>");
-               return;
-           }
-           navigator.geolocation.getCurrentPosition(success, error);
-          $locate.fadeOut();
-       });
-function success(position) {
-       var currentPos = [position.coords.latitude,position.coords.longitude];
-       $findNearest.fadeIn()
-           .on('click', function(e) {
-               $findNearest.fadeOut();
-
-               queryFeatures(currentPos, 5);
-               myLocation.unbindTooltip();
-       });
-   };
-   function queryFeatures(locateControl, numResults) {
-       var distances = [];
-       breweries.eachLayer(function(l) {
-           var distance = L.latLng(currentPos).distanceTo(l.getLatLng()) / 1000;
-           distances.push(distance);
-       });
-       distances.sort(function(a, b) {
-           return a - b;
-       });
-
-       var nearByLayer = L.featureGroup();
-
-
-      breweries.eachLayer(function(l) {
-
-          var distance = L.latLng(currentPos).distanceTo(l.getLatLng())/1000;
-
-          if(distance < distances[numResults]) {
-
-              l.bindTooltip(distance.toLocaleString() + ' km from current location.');
-
-              L.polyline([currentPos, l.getLatLng()], {
-                  color : 'orange',
-                  weight : 2,
-                  opacity: 1,
-                  dashArray : "5, 10"
-              }).addTo(nearByLayer);
-
-          }
-          });
-   }
-
-*/
 
 
 // Leaflet patch to make layer control scrollable on touch browsers
