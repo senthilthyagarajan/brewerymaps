@@ -455,7 +455,18 @@ $("#find-nearest").click(function() {
         for (i = 0; i < nearestLayer.length; i++) {
   //           map.addLayer(nearestLayer[i].layer, highlightStyle);
              highlight.addLayer(L.circleMarker([nearestLayer[i].lat, nearestLayer[i].lon], highlightStyle));
-        }
+
+                 var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Name</th><td>" + nearestLayer[i].layer.feature.properties.name + "</td></tr>" + "<tr><th>Type</th><td>" + nearestLayer[i].layer.feature.properties.type + "</td></tr>" + "<tr><th>Address</th><td>" + nearestLayer[i].layer.feature.properties.address + "</td></tr>" + "<table><hr>";
+
+                    //     $("#feature-title").html(nearestLayer[i].layer.feature.properties.name);
+                         $("#feature-info").append(content);
+                         }
+                         $("#featureModal").modal("show");
+
+
+
+
+
     })
 
 
