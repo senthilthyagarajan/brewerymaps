@@ -88,7 +88,18 @@ function sidebarClick(id) {
         map.invalidateSize();
     }
 }
-
+  var latit =0 ;
+  var longit = 0;
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      latit = position.coords.latitude;
+      longit = position.coords.longitude;
+      // this is just a marker placed in that position
+      var abc = L.marker([position.coords.latitude, position.coords.longitude]).addTo(map);
+      // move the map to have the location in its center
+      map.panTo(new L.LatLng(latit, longit));
+  }
+)}
 function syncSidebar() {
     /* Empty sidebar features */
     $("#feature-list tbody").empty();
@@ -181,13 +192,13 @@ $.getJSON("data/breweries.geojson", function(data) {
     breweries.addData(data);
 });
 
-map = L.map("map", {
+map = L.map('map', {
     zoom: 11,
-    center: [32.787513, -96.791612],
     layers: [cartoLight, markerClusters, highlight],
     zoomControl: false,
     attributionControl: false
-});
+}).setView([latit, longit], 13);
+
 
 /* Layer control listeners that allow for a single markerClusters layer */
 map.on("overlayadd", function(e) {
