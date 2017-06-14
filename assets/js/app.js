@@ -88,18 +88,19 @@ function sidebarClick(id) {
         map.invalidateSize();
     }
 }
-  var latit =0 ;
-  var longit = 0;
-  if (navigator.geolocation) {
+var latit = 0;
+var longit = 0;
+if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
-      latit = position.coords.latitude;
-      longit = position.coords.longitude;
-      // this is just a marker placed in that position
-      var abc = L.marker([position.coords.latitude, position.coords.longitude]).addTo(map);
-      // move the map to have the location in its center
-      map.panTo(new L.LatLng(latit, longit));
-  }
-)}
+        latit = position.coords.latitude;
+        longit = position.coords.longitude;
+        // this is just a marker placed in that position
+        var abc = L.marker([position.coords.latitude, position.coords.longitude]).addTo(map);
+        // move the map to have the location in its center
+        map.panTo(new L.LatLng(latit, longit));
+    })
+}
+
 function syncSidebar() {
     /* Empty sidebar features */
     $("#feature-list tbody").empty();
@@ -193,8 +194,8 @@ $.getJSON("data/breweries.geojson", function(data) {
 });
 
 map = L.map('map', {
-    zoom: 11,
-    layers: [cartoLight, markerClusters, highlight],
+    zoom: 14,
+    layers: [cartoLight, breweries, highlight],
     zoomControl: false,
     attributionControl: false
 }).setView([latit, longit], 13);
@@ -323,7 +324,7 @@ $("#featureModal").on("hidden.bs.modal", function(e) {
     $(document).on("mouseout", ".feature-row", clearHighlight);
 });
 
-/* Typeahead search functionality */
+/
 /* Typeahead search functionality */
 $(document).one("ajaxStop", function() {
     $("#loading").hide();
@@ -416,7 +417,6 @@ $(document).one("ajaxStop", function() {
                 map._layers[datum.id].fire("click");
             }
         }
-
         if (datum.source === "GeoNames") {
             map.setView([datum.lat, datum.lng], 14);
         }
@@ -437,7 +437,7 @@ $(document).one("ajaxStop", function() {
 // For finding nearest
 
 $("#find-nearest").click(function() {
-  var content;
+    var content;
     $("#feature-info").empty(content);
     var gj = breweries;
     navigator.geolocation.getCurrentPosition(function(pos) {
@@ -446,13 +446,10 @@ $("#find-nearest").click(function() {
         for (i = 0; i < nearestLayer.length; i++) {
             //           map.addLayer(nearestLayer[i].layer, highlightStyle);
             highlight.addLayer(L.circleMarker([nearestLayer[i].lat, nearestLayer[i].lon], highlightStyle));
-
             content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Name</th><td>" + nearestLayer[i].layer.feature.properties.name + "</td></tr>" + "<tr><th>Type</th><td>" + nearestLayer[i].layer.feature.properties.type + "</td></tr>" + "<tr><th>Address</th><td>" + nearestLayer[i].layer.feature.properties.address + "</td></tr>" + "<table><hr>";
-
             $("#feature-info").append(content);
         }
-            $("#featureModal").modal("show");
-
+        $("#featureModal").modal("show");
     })
 });
 
