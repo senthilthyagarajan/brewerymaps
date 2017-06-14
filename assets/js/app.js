@@ -435,9 +435,9 @@ $(document).one("ajaxStop", function() {
 });
 
 // For finding nearest
-
+  var content;
 $("#find-nearest").click(function() {
-    var content;
+    content;
     $("#feature-info").empty(content);
     var gj = breweries;
     navigator.geolocation.getCurrentPosition(function(pos) {
@@ -453,6 +453,12 @@ $("#find-nearest").click(function() {
     })
 });
 
+// append content to email body
+function append_data(e){
+  var body= e.getAttribute("href");
+  var some_data = content;
+  e.href=body+some_data;
+}
 
 // Leaflet patch to make layer control scrollable on touch browsers
 var container = $(".leaflet-control-layers")[0];

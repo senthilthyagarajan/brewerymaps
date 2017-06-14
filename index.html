@@ -203,7 +203,7 @@
     </div><!-- /.modal -->
 
     <div class="modal fade" id="featureModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog">
+      <div class="modal-dialog" id='emailcontent'>
         <div class="modal-content">
           <div class="modal-header">
             <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -211,6 +211,10 @@
           </div>
           <div class="modal-body" id="feature-info"></div>
           <div class="modal-footer">
+            <!-- Email -->
+   <a href="mailto:?Subject=I found these breweries&amp;Body='I%20saw%20this%20and%20thought%20of%20you!%20 '"onclick ="append_data(this);">
+       <img src="https://simplesharebuttons.com/images/somacro/email.png" alt="Email" />
+   </a>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
         </div><!-- /.modal-content -->
