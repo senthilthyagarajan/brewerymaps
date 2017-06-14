@@ -194,13 +194,13 @@ $.getJSON("data/breweries.geojson", function(data) {
 });
 
 map = L.map('map', {
-    zoom: 14,
-    layers: [cartoLight, breweries, highlight],
+    zoom: 13,
+    layers: [cartoLight, markerClusters, highlight],
     zoomControl: false,
     attributionControl: false
 }).setView([latit, longit], 13);
 
-
+//map.addLayer(breweries)
 /* Layer control listeners that allow for a single markerClusters layer */
 map.on("overlayadd", function(e) {
 
@@ -324,7 +324,7 @@ $("#featureModal").on("hidden.bs.modal", function(e) {
     $(document).on("mouseout", ".feature-row", clearHighlight);
 });
 
-/
+
 /* Typeahead search functionality */
 $(document).one("ajaxStop", function() {
     $("#loading").hide();
