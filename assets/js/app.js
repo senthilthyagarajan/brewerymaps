@@ -435,9 +435,12 @@ $(document).one("ajaxStop", function() {
 });
 
 // For finding nearest
-  var content;
+  var emailContent ;
+   var emailArray= [];
+   var content;
 $("#find-nearest").click(function() {
-    content;
+    content = null;
+     emailArray= [];
     $("#feature-info").empty(content);
     var gj = breweries;
     navigator.geolocation.getCurrentPosition(function(pos) {
@@ -447,6 +450,8 @@ $("#find-nearest").click(function() {
             //           map.addLayer(nearestLayer[i].layer, highlightStyle);
             highlight.addLayer(L.circleMarker([nearestLayer[i].lat, nearestLayer[i].lon], highlightStyle));
             content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Name</th><td>" + nearestLayer[i].layer.feature.properties.name + "</td></tr>" + "<tr><th>Type</th><td>" + nearestLayer[i].layer.feature.properties.type + "</td></tr>" + "<tr><th>Address</th><td>" + nearestLayer[i].layer.feature.properties.address + "</td></tr>" + "<table><hr>";
+            emailArray.push(nearestLayer[i].layer.feature.properties.name);
+             emailContent = emailArray.join();
             $("#feature-info").append(content);
         }
         $("#featureModal").modal("show");
@@ -456,7 +461,7 @@ $("#find-nearest").click(function() {
 // append content to email body
 function append_data(e){
   var body= e.getAttribute("href");
-  var some_data = content;
+  var some_data = emailContent ;//can replace by emailContent
   e.href=body+some_data;
 }
 
