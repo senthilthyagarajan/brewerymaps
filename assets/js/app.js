@@ -139,6 +139,7 @@ var highlightStyle = {
 
 /* Single marker cluster layer to hold all clusters */
 var markerClusters = new L.MarkerClusterGroup({
+   chunkedLoading: true,
     spiderfyOnMaxZoom: true,
     showCoverageOnHover: false,
     zoomToBoundsOnClick: true,
@@ -191,6 +192,7 @@ var breweries = L.geoJson(null, {
 });
 $.getJSON("data/breweries.geojson", function(data) {
     breweries.addData(data);
+    map.addLayer(breweryLayer);
 });
 
 map = L.map('map', {
@@ -199,6 +201,7 @@ map = L.map('map', {
     zoomControl: false,
     attributionControl: false
 }).setView([latit, longit], 13);
+
 
 //map.addLayer(breweries)
 /* Layer control listeners that allow for a single markerClusters layer */
@@ -286,8 +289,8 @@ var locateControl = L.control.locate({
 }).addTo(map);
 
 /* Larger screens get expanded layer control and visible sidebar */
-if (document.body.clientWidth <= 2000) {
-    var isCollapsed = false;
+if (document.body.clientWidth <= 1000) {
+    var isCollapsed = true;
 } else {
     var isCollapsed = false;
 }
@@ -298,7 +301,6 @@ var baseLayers = {
 
 var groupedOverlays = {
     "Layers": {
-
         "<img src='assets/img/beer.svg' width='24' height='28'>&nbsp;Breweries": breweryLayer
     },
 
